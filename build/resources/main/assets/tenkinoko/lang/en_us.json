@@ -1,0 +1,18 @@
+{
+  "commands.info.category.header": "Weathers and time points that available are as follows, please enter /tk change (weather/time) (type) to switch to the type you want:",
+  "commands.info.category.weathers": "Weathers:\nRainy, thunderstorm, sunny.",
+  "commands.info.category.times": "Times:\nMorning, noon, evening, midnight.",
+  "commands.info.exception" : "Wrong Augment.To acquire the correct weather or time augment, enter /tk help for more information.",
+  "commands.lack" : "{0} have not enough money to initialize a transformation.",
+  "commands.confirm": "Enter /tk confirm to initiate a vote.",
+  "commands.confirm.occupied" : "Weather/time changed, or voting.",
+  "commands.confirm.exception.augment" : "Wrong augment!",
+  "commands.confirm.exception.null" : "You have no request to confirm yet.",
+  "commands.confirm.timeout": "Confirmation timed out.",
+  "commands.confirm.cancel" : "Confirmation successfully cancelled.",
+  "vote.start" : "{0} initiate a vote on change {1} to {2}.\n The current voting status is: \n yes : 1 \n no : 0.",
+  "vote.result" : "Vote result:\n yes:{0}\n mp:{1}\n The vote is {2} passed.",
+  "vote.passed" : "",
+  "vote.denied" : "not",
+  "vote.voted" : "You have voted!"
+}

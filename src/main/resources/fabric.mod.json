@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "tenkinoko",
+  "version": "${version}",
+  "name": "TenKiNoKo",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/doohaey/TenKiNoKo"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/tenkinoko/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "client": [
+      "org.doohaey.example.tenkinoko.client.TenKiNoKoClient"
+    ],
+    "main": [
+      "org.doohaey.example.tenkinoko.TenKiNoKo"
+    ]
+  },
+  "mixins": [
+    "tenkinoko.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
