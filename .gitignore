@@ -21,6 +21,8 @@ src/
 *.DS_Store
 *main/.DS_Store
 
+gradle/.DS_Store
+
 # fabric
 
 run/
