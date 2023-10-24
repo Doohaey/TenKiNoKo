@@ -17,6 +17,10 @@ classes/
 
 *.DS_Store
 
+src/
+*.DS_Store
+*main/.DS_Store
+
 # fabric
 
 run/
