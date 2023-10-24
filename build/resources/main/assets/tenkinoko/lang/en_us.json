@@ -15,5 +15,6 @@
   "vote.result" : "Vote result:\n yes:{0}\n mp:{1}\n The vote is {2} passed.",
   "vote.passed" : "",
   "vote.denied" : "not",
-  "vote.voted" : "You have voted!"
+  "vote.voted" : "You have voted!",
+  "vote.null" : "No vote ongoing in process"
 }

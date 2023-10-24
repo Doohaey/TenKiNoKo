@@ -15,5 +15,6 @@
   "vote.result" : "投票结果:\n 赞成:{0}\n 反对:{1}\n 投票是 {2} 通过。",
   "vote.passed" : "",
   "vote.denied" : "未",
-  "vote.voted" : "您已经投过票了！"
+  "vote.voted" : "您已经投过票了！",
+  "vote.null" : "没有进行中的投票！"
 }
