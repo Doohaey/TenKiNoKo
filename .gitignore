@@ -20,3 +20,4 @@ classes/
 # fabric
 
 run/
+.DS_Store
