@@ -12,7 +12,6 @@ import org.doohaey.example.tenkinoko.util.enums.Types;
 import static org.doohaey.example.tenkinoko.util.ModTranslator.tr;
 
 public class Commands implements Command<ServerCommandSource> {
-    public static int price = 40;
     @Override
     public int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         return 0;

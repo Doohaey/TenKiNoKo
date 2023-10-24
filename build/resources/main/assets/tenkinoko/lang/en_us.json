@@ -9,6 +9,7 @@
   "commands.confirm.exception.augment" : "Wrong augment!",
   "commands.confirm.exception.null" : "You have no request to confirm yet.",
   "commands.confirm.timeout": "Confirmation timed out.",
+  "commands.cooldown.timeout": "Cool-down ended, you can change the weather again.",
   "commands.confirm.cancel" : "Confirmation successfully cancelled.",
   "vote.start" : "{0} initiate a vote on change {1} to {2}.\n The current voting status is: \n yes : 1 \n no : 0.",
   "vote.result" : "Vote result:\n yes:{0}\n mp:{1}\n The vote is {2} passed.",

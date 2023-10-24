@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TenKiNoKo implements ModInitializer {
-    public static final String MOD_ID = "TenKiNoKo";
-    public static final Logger TK_LOGGER = LoggerFactory.getLogger("TenKiNoKo");
+    public static final String MOD_ID = "tenkinoko";
+    public static final Logger TK_LOGGER = LoggerFactory.getLogger("tenkinoko");
     public static final ModConfig TK_CONFIG = new ModConfig();
 
     @Override

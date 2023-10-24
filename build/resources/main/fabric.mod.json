@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "tenkinoko",
-  "version": "1.0-SNAPSHOT",
+  "version": "1.2-SNAPSHOT",
   "name": "TenKiNoKo",
   "description": "",
   "authors": [],
@@ -9,12 +9,8 @@
     "repo": "https://github.com/doohaey/TenKiNoKo"
   },
   "license": "All-Rights-Reserved",
-  "icon": "assets/tenkinoko/icon.png",
   "environment": "server",
   "entrypoints": {
-    "client": [
-      "org.doohaey.example.tenkinoko.client.TenKiNoKoClient"
-    ],
     "main": [
       "org.doohaey.example.tenkinoko.TenKiNoKo"
     ]
@@ -23,7 +19,7 @@
     "tenkinoko.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.22",
+    "fabricloader": ">=0.14.21",
     "fabric": "*",
     "minecraft": "1.20.1"
   }

@@ -15,8 +15,8 @@ public class ModConfig extends HokiConfig {
     @ConfigOption
     public final Option<String> LANG = new Option<>(
             "core.language",
-            "en_us",
-            "Displayed in English.",
+            "zh_cn",
+            "默认语言为中文",
             Config::getString);
 
     @ConfigOption

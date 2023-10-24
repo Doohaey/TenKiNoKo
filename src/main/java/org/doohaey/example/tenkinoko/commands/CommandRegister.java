@@ -52,27 +52,6 @@ public class CommandRegister implements Command<ServerCommandSource> {
                             COMMANDS.runInfo(context, Categories.ALL);
                             return 1;
                         })
-                        .then(argument("category", string())
-                                .suggests((context, builder) ->{
-                                    builder.suggest("weather");
-                                    builder.suggest("time");
-                                    return builder.buildFuture();
-                                })
-                                .executes(context -> {
-                                    String cateAux = StringArgumentType.getString(context,"category");
-                                    switch (cateAux){
-                                        case "weather" -> COMMANDS.runInfo(context, Categories.WEATHER);
-                                        case "time" -> COMMANDS.runInfo(context, Categories.TIME);
-                                        case "all" -> COMMANDS.runInfo(context, Categories.ALL);
-                                        default -> {
-                                            ServerPlayerEntity player = context.getSource().getPlayer();
-                                            assert player != null;
-                                            player.sendMessage(tr("commands.info.exception"));
-                                        }
-                                    }
-                                    return 1;
-                                })
-                        )
                         .then(argument("type",string())
                                 .suggests(((context, builder) -> {
                                     builder.suggest("rainy");
@@ -96,7 +75,7 @@ public class CommandRegister implements Command<ServerCommandSource> {
                                             Objects.equals(typeAux,"evening") ||
                                             Objects.equals(typeAux,"midnight")) {
                                             if (price <= playerData.getMoney()) {
-                                                if (toVote == null && toCoolDown == null) {
+                                                if (toVote.isEmpty() && toCoolDown.isEmpty()) {
                                                     typeAux = typeAux.toUpperCase();
                                                     Types type;
                                                     try {
@@ -119,7 +98,8 @@ public class CommandRegister implements Command<ServerCommandSource> {
                                             player.sendMessage(tr("commands.confirm.exception"));
                                         }
                                     return Commands.SINGLE_SUCCESS;
-                                }))
+                                })
+                                )
                         )
                 )
                 .then(literal("help")
@@ -160,12 +140,22 @@ public class CommandRegister implements Command<ServerCommandSource> {
                         }))
                 .then(literal("yes")
                         .executes(context -> {
-                            VOTE.countYes(context);
+                            ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+                            if (!toVote.isEmpty()) {
+                                VOTE.countYes(context);
+                            } else {
+                                player.sendMessage(tr("vote.null"));
+                            }
                             return Commands.SINGLE_SUCCESS;
                         }))
                 .then(literal("no")
                         .executes(context -> {
-                            VOTE.countNo(context);
+                            ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+                            if (!toVote.isEmpty()) {
+                                VOTE.countNo(context);
+                            } else {
+                                player.sendMessage(tr("vote.null"));
+                            }
                             return Commands.SINGLE_SUCCESS;
                         }))
         );
@@ -192,7 +182,9 @@ public class CommandRegister implements Command<ServerCommandSource> {
                 if (_todo instanceof VoteProcess) {
                     executeVoteResult(server, player, (VoteProcess) _todo);
                 } else if (_todo instanceof ConfirmProcess){
-                    notifyTimeout(server, player);
+                    notifyTimeoutConfirm(server, player);
+                } else if (_todo instanceof CoolDownProcess) {
+                    notifyTimeoutCooldown(server,player);
                 }
             }
         }
@@ -202,8 +194,12 @@ public class CommandRegister implements Command<ServerCommandSource> {
         }
     }
 
-    public static void notifyTimeout(MinecraftServer server, ServerPlayerEntity player){
+    public static void notifyTimeoutConfirm(MinecraftServer server, ServerPlayerEntity player){
         player.sendMessage(tr("commands.confirm.timeout"));
+    }
+
+    public static void notifyTimeoutCooldown(MinecraftServer server, ServerPlayerEntity player){
+        player.sendMessage(tr("commands.cooldown.timeout"));
     }
     public static void executeVoteResult(MinecraftServer server, ServerPlayerEntity player, VoteProcess voteProcess) {
         if (VOTE.votingResult()) {

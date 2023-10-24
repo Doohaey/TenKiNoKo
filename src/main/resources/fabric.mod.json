@@ -9,12 +9,8 @@
     "repo": "https://github.com/doohaey/TenKiNoKo"
   },
   "license": "All-Rights-Reserved",
-  "icon": "assets/tenkinoko/icon.png",
   "environment": "server",
   "entrypoints": {
-    "client": [
-      "org.doohaey.example.tenkinoko.client.TenKiNoKoClient"
-    ],
     "main": [
       "org.doohaey.example.tenkinoko.TenKiNoKo"
     ]
@@ -23,7 +19,7 @@
     "tenkinoko.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=${loader_version}",
+    "fabricloader": ">=0.14.21",
     "fabric": "*",
     "minecraft": "${minecraft_version}"
   }
