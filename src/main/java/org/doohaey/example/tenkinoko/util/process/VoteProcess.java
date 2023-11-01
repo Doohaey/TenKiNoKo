@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import static org.doohaey.example.tenkinoko.util.ModTranslator.tr;
 
 public class VoteProcess extends Process {
-    public static int price = 40;
     int yesVote = 1;
     int noVote = 0;
     ArrayList<ServerPlayerEntity> votedPlayers = new ArrayList<>();
@@ -54,7 +53,7 @@ public class VoteProcess extends Process {
         return true;
     }
 
-    public boolean votingResult(){
+    public boolean votingResult() {
         Text message = this.getTextMessage();
         player.getServer().getPlayerManager().broadcast(message, false);
         return true;

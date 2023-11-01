@@ -4,7 +4,7 @@ import com.imyvm.economy.EconomyMod;
 import com.imyvm.economy.PlayerData;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandRegistryAccess;
@@ -12,6 +12,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+import org.doohaey.example.tenkinoko.util.ModConfig;
 import org.doohaey.example.tenkinoko.util.enums.Categories;
 import org.doohaey.example.tenkinoko.util.enums.Types;
 import org.doohaey.example.tenkinoko.util.process.ConfirmProcess;
@@ -21,10 +23,7 @@ import org.doohaey.example.tenkinoko.util.process.Process;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Objects;
 
-import static com.mojang.brigadier.arguments.StringArgumentType.string;
-import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 import static org.doohaey.example.tenkinoko.util.ModTranslator.tr;
 
@@ -35,7 +34,7 @@ public class CommandRegister implements Command<ServerCommandSource> {
     public static HashMap<ServerPlayerEntity, ConfirmProcess> toConfirm = new HashMap<>();
     public static HashMap<ServerPlayerEntity, VoteProcess> toVote = new HashMap<>();
     public static HashMap<ServerPlayerEntity, CoolDownProcess> toCoolDown = new HashMap<>();
-    public static int price = 20;
+    public static long price = (long) (20 * (1 + ModConfig.TAX_RESTOCK.getValue()));
 
     @Override
     public int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -47,61 +46,8 @@ public class CommandRegister implements Command<ServerCommandSource> {
                                 CommandManager.RegistrationEnvironment environment) {
         dispatcher.register(literal("tk")
                 .requires(ServerCommandSource::isExecutedByPlayer)
-                .then(literal("change")
-                        .executes(context -> {
-                            COMMANDS.runInfo(context, Categories.ALL);
-                            return 1;
-                        })
-                        .then(argument("type",string())
-                                .suggests(((context, builder) -> {
-                                    builder.suggest("rainy");
-                                    builder.suggest("thunderstorm");
-                                    builder.suggest("sunny");
-                                    builder.suggest("morning");
-                                    builder.suggest("noon");
-                                    builder.suggest("evening");
-                                    builder.suggest("midnight");
-                                 return builder.buildFuture();
-                                }))
-                                .executes((context -> {
-                                    String typeAux = StringArgumentType.getString(context,"type");
-                                    ServerPlayerEntity player = context.getSource().getPlayer();
-                                    PlayerData playerData = EconomyMod.data.getOrCreate(player);
-                                    if (Objects.equals(typeAux, "rainy") ||
-                                            Objects.equals(typeAux,"thunderstorm") ||
-                                            Objects.equals(typeAux,"sunny")   ||
-                                            Objects.equals(typeAux,"morning") ||
-                                            Objects.equals(typeAux,"noon")    ||
-                                            Objects.equals(typeAux,"evening") ||
-                                            Objects.equals(typeAux,"midnight")) {
-                                            if (price <= playerData.getMoney()) {
-                                                if (toVote.isEmpty() && toCoolDown.isEmpty()) {
-                                                    typeAux = typeAux.toUpperCase();
-                                                    Types type;
-                                                    try {
-                                                        type = Types.valueOf(typeAux);
-                                                    } catch (IllegalArgumentException e) {
-                                                        player.sendMessage(tr("commands.confirm.exception"));
-                                                        return Commands.SINGLE_SUCCESS;
-                                                    }
-                                                    ConfirmProcess confirmProcess = new ConfirmProcess
-                                                            (player, type, basisTicks);
-                                                    CommandRegister.toConfirm.put(player, confirmProcess);
-                                                    player.sendMessage(tr("commands.confirm"));
-                                                } else {
-                                                    player.sendMessage(tr("commands.confirm.occupied"));
-                                                }
-                                            } else {
-                                                player.sendMessage(tr("commands.lack"));
-                                            }
-                                        } else {
-                                            player.sendMessage(tr("commands.confirm.exception"));
-                                        }
-                                    return Commands.SINGLE_SUCCESS;
-                                })
-                                )
-                        )
-                )
+                .requires(ServerCommandSource::isExecutedByPlayer)
+                .then(buildChangeCommand())
                 .then(literal("help")
                         .executes(context -> {
                             COMMANDS.runInfo(context, Categories.ALL);
@@ -161,13 +107,42 @@ public class CommandRegister implements Command<ServerCommandSource> {
         );
     }
 
+    private static LiteralArgumentBuilder<ServerCommandSource> buildChangeCommand() {
+        LiteralArgumentBuilder<ServerCommandSource> change = literal("change");
+        for (Types type : Types.values()) {
+            String subCommandName = type.name().toLowerCase();
+            change.then(literal(subCommandName)
+                    .executes(context -> {
+                        handleConfirm(context, type);
+                        return Commands.SINGLE_SUCCESS;
+                    }));
+        }
+        return change;
+    }
+    public static void handleConfirm(CommandContext<ServerCommandSource> context, Types type) throws CommandSyntaxException {
+        ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+        PlayerData playerData = EconomyMod.data.getOrCreate(player);
+
+        if (price <= playerData.getMoney()) {
+            if (toVote.isEmpty() && toCoolDown.isEmpty()) {
+                ConfirmProcess confirmProcess = new ConfirmProcess
+                        (player, type, basisTicks);
+                CommandRegister.toConfirm.put(player, confirmProcess);
+                player.sendMessage(tr("commands.confirm"));
+            } else {
+                player.sendMessage(tr("commands.confirm.occupied"));
+            }
+        } else {
+            player.sendMessage(tr("commands.lack"));
+        }
+    }
     public static void serverTick(MinecraftServer server){
         handleServerTick(server, toConfirm);
         handleServerTick(server, toVote);
         handleServerTick(server, toCoolDown);
     }
 
-    public static <T extends Process> void handleServerTick(MinecraftServer server, HashMap<ServerPlayerEntity, T> todo) {
+    protected static <T extends Process> void handleServerTick(MinecraftServer server, HashMap<ServerPlayerEntity, T> todo) {
         HashSet<ServerPlayerEntity> toRemove = new HashSet<>();
 
         for (ServerPlayerEntity player : todo.keySet()) {
@@ -184,7 +159,7 @@ public class CommandRegister implements Command<ServerCommandSource> {
                 } else if (_todo instanceof ConfirmProcess){
                     notifyTimeoutConfirm(server, player);
                 } else if (_todo instanceof CoolDownProcess) {
-                    notifyTimeoutCooldown(server,player);
+                    notifyTimeoutCoolDown(server,player);
                 }
             }
         }
@@ -194,19 +169,29 @@ public class CommandRegister implements Command<ServerCommandSource> {
         }
     }
 
-    public static void notifyTimeoutConfirm(MinecraftServer server, ServerPlayerEntity player){
+    private static void notifyTimeoutConfirm(MinecraftServer server, ServerPlayerEntity player){
         player.sendMessage(tr("commands.confirm.timeout"));
     }
 
-    public static void notifyTimeoutCooldown(MinecraftServer server, ServerPlayerEntity player){
-        player.sendMessage(tr("commands.cooldown.timeout"));
+    private static void notifyTimeoutCoolDown(MinecraftServer server, ServerPlayerEntity player){
+        player.sendMessage(tr("commands.cd.timeout"));
     }
-    public static void executeVoteResult(MinecraftServer server, ServerPlayerEntity player, VoteProcess voteProcess) {
-        if (VOTE.votingResult()) {
+    private static void executeVoteResult(MinecraftServer server, ServerPlayerEntity player, VoteProcess voteProcess) {
+        boolean passed = VOTE.votingResult();
+        if (passed) {
             Types type = voteProcess.getType();
             COMMANDS.runChange(player, type);
             CoolDownProcess process = new CoolDownProcess(voteProcess.getPlayer(), voteProcess.getType(), basisTicks * 20);
             toCoolDown.put(player, process);
+
+            Text message = getTextMessage(player, type);
+            PlayerData sourceData = EconomyMod.data.getOrCreate(player);
+            sourceData.addMoney(-price);
+            player.getServer().getPlayerManager().broadcast(message,false);
         }
+    }
+
+    private static Text getTextMessage(ServerPlayerEntity player, Types types){
+        return tr("money.cost", player, types, price);
     }
 }

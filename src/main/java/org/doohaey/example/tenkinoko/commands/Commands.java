@@ -35,13 +35,13 @@ public class Commands implements Command<ServerCommandSource> {
     public int runChange(ServerPlayerEntity player, Types type){
         ServerWorld serverWorld = player.getServerWorld();
         if (type == Types.RAINY || type == Types.THUNDERSTORM || type == Types.CLEAR) {
-            return runChangeWeather(player, type, serverWorld);
+            return runChangeWeather(type, serverWorld);
         } else {
-            return runChangeTime(player, type, serverWorld);
+            return runChangeTime(type, serverWorld);
         }
     }
 
-    private int runChangeWeather(ServerPlayerEntity player, Types type, ServerWorld serverWorld) {
+    private int runChangeWeather(Types type, ServerWorld serverWorld) {
         switch (type) {
             case RAINY -> serverWorld.setWeather(0,12000,true,false);
             case THUNDERSTORM -> serverWorld.setWeather(0,12000,true,true);
@@ -50,7 +50,7 @@ public class Commands implements Command<ServerCommandSource> {
         return Commands.SINGLE_SUCCESS;
     }
 
-    private int runChangeTime(ServerPlayerEntity player, Types type, ServerWorld serverWorld){
+    private int runChangeTime(Types type, ServerWorld serverWorld){
         long time = serverWorld.getTime();
         switch (type) {
             case MORNING -> time = 1000;
