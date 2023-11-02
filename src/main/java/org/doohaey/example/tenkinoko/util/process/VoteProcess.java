@@ -16,12 +16,13 @@ public class VoteProcess extends Process {
     ArrayList<ServerPlayerEntity> votedPlayers = new ArrayList<>();
     public VoteProcess(ServerPlayerEntity player, Types type, Integer timeLeft) {
         super(player, type, timeLeft);
-        initialize();
+        initialize(player);
     }
-    public void initialize(){
+    public void initialize(ServerPlayerEntity player){
         yesVote = 1;
         noVote = 0;
         votedPlayers.clear();
+        votedPlayers.add(player);
     }
 
     public void countYes(CommandContext<ServerCommandSource> context){
