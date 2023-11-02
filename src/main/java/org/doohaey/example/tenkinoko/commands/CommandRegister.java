@@ -46,7 +46,6 @@ public class CommandRegister implements Command<ServerCommandSource> {
                                 CommandManager.RegistrationEnvironment environment) {
         dispatcher.register(literal("tk")
                 .requires(ServerCommandSource::isExecutedByPlayer)
-                .requires(ServerCommandSource::isExecutedByPlayer)
                 .then(buildChangeCommand())
                 .then(literal("help")
                         .executes(context -> {
@@ -66,6 +65,7 @@ public class CommandRegister implements Command<ServerCommandSource> {
 
                             VOTE = new VoteProcess(process.getPlayer(), process.getType(), basisTicks);
                             CommandRegister.toVote.put(player, VOTE);
+                            toConfirm.clear();
 
                             return Commands.SINGLE_SUCCESS;
                         }))
@@ -89,6 +89,8 @@ public class CommandRegister implements Command<ServerCommandSource> {
                             ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
                             if (!toVote.isEmpty()) {
                                 VOTE.countYes(context);
+                                player.sendMessage(tr("vote.success"));
+                                VOTE.showVotingResultInProcess();
                             } else {
                                 player.sendMessage(tr("vote.null"));
                             }
@@ -99,9 +101,20 @@ public class CommandRegister implements Command<ServerCommandSource> {
                             ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
                             if (!toVote.isEmpty()) {
                                 VOTE.countNo(context);
+                                player.sendMessage(tr("vote.no"));
+                                VOTE.showVotingResultInProcess();
                             } else {
                                 player.sendMessage(tr("vote.null"));
                             }
+                            return Commands.SINGLE_SUCCESS;
+                        }))
+                .then(literal("passCoolDown")
+                        .requires(source -> source.hasPermissionLevel(4))
+                        .executes(context -> {
+                            ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
+                            toCoolDown.clear();
+                            Text message = tr("cd.clear");
+                            player.getServer().getPlayerManager().broadcast(message,false);
                             return Commands.SINGLE_SUCCESS;
                         }))
         );
@@ -177,7 +190,7 @@ public class CommandRegister implements Command<ServerCommandSource> {
         player.sendMessage(tr("commands.cd.timeout"));
     }
     private static void executeVoteResult(MinecraftServer server, ServerPlayerEntity player, VoteProcess voteProcess) {
-        boolean passed = VOTE.votingResult();
+        boolean passed = VOTE.showVotingResultEventually();
         if (passed) {
             Types type = voteProcess.getType();
             COMMANDS.runChange(player, type);

@@ -54,7 +54,13 @@ public class VoteProcess extends Process {
         return true;
     }
 
-    public boolean votingResult() {
+    public void showVotingResultInProcess() {
+        Text message = tr("vote.add");
+        player.getServer().getPlayerManager().broadcast(message,false);
+        showVotingResultEventually();
+    }
+
+    public boolean showVotingResultEventually() {
         Text message = this.getTextMessage();
         player.getServer().getPlayerManager().broadcast(message, false);
         return true;
