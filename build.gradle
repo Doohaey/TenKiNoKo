@@ -14,10 +14,6 @@ repositories {
     // for more information about repositories.
 
     mavenCentral()
-    // Imyvm Hoki
-    maven {
-        url = uri("https://maven.victorica.dev")
-    }
 
     maven {
         url = uri("https://maven.pkg.github.com/ImyvmCircle/ImyvmEconomy")

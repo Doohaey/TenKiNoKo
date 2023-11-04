@@ -1,12 +1,14 @@
 package org.doohaey.example.tenkinoko.util.process;
 
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.doohaey.example.tenkinoko.util.enums.Types;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static org.doohaey.example.tenkinoko.util.ModTranslator.tr;
 
@@ -25,16 +27,16 @@ public class VoteProcess extends Process {
         votedPlayers.add(player);
     }
 
-    public void countYes(CommandContext<ServerCommandSource> context){
+    public void countYes(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         count(true, context);
     }
 
-    public void countNo(CommandContext<ServerCommandSource> context){
+    public void countNo(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         count(false, context);
     }
 
-    private void count(boolean ballot, CommandContext<ServerCommandSource> context){
-        ServerPlayerEntity voter = context.getSource().getPlayer();
+    private void count(boolean ballot, CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerPlayerEntity voter = context.getSource().getPlayerOrThrow();
         if (isAvailableVoter(voter)) {
             if (ballot) {
                 yesVote++;
@@ -56,13 +58,13 @@ public class VoteProcess extends Process {
 
     public void showVotingResultInProcess() {
         Text message = tr("vote.add");
-        player.getServer().getPlayerManager().broadcast(message,false);
+        Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(message,false);
         showVotingResultEventually();
     }
 
     public boolean showVotingResultEventually() {
         Text message = this.getTextMessage();
-        player.getServer().getPlayerManager().broadcast(message, false);
+        Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(message, false);
         return true;
     }
 
