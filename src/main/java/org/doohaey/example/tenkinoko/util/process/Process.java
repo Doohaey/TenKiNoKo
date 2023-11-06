@@ -4,9 +4,9 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import org.doohaey.example.tenkinoko.util.enums.Types;
 
 public abstract class Process {
-        ServerPlayerEntity player = null;
-        Types type = null;
-        Integer timeLeft = null;
+        ServerPlayerEntity player;
+        Types type;
+        Integer timeLeft;
         public Process(ServerPlayerEntity player, Types type, Integer timeLeft){
             this.player = player;
             this.type = type;

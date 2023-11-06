@@ -16,8 +16,8 @@ public class TenKiNoKo implements ModInitializer {
     @Override
     public void onInitialize() {
         TK_CONFIG.loadAndSave();
-        CommandRegistrationCallback.EVENT.register(CommandRegister::register);
-        ServerTickEvents.START_SERVER_TICK.register(CommandRegister::serverTick);
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> CommandRegister.register(dispatcher));
+        ServerTickEvents.START_SERVER_TICK.register(server -> CommandRegister.serverTick());
 
         TK_LOGGER.info("TenKiNoKo initialized.");
     }

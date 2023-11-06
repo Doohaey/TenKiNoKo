@@ -2,14 +2,10 @@ package org.doohaey.example.tenkinoko.commands;
 
 import com.imyvm.economy.EconomyMod;
 import com.imyvm.economy.PlayerData;
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -23,11 +19,13 @@ import org.doohaey.example.tenkinoko.util.process.Process;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 
 import static net.minecraft.server.command.CommandManager.literal;
 import static org.doohaey.example.tenkinoko.util.ModTranslator.tr;
+import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
-public class CommandRegister implements Command<ServerCommandSource> {
+public class CommandRegister {
     public static final int basisTicks = 600;
     public static final Commands COMMANDS = new Commands();
     public static VoteProcess VOTE;
@@ -36,21 +34,14 @@ public class CommandRegister implements Command<ServerCommandSource> {
     public static HashMap<ServerPlayerEntity, CoolDownProcess> toCoolDown = new HashMap<>();
     public static long price = (long) (20 * (1 + ModConfig.TAX_RESTOCK.getValue()));
 
-    @Override
-    public int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        return 0;
-    }
-
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher,
-                                CommandRegistryAccess registryAccess,
-                                CommandManager.RegistrationEnvironment environment) {
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(literal("tk")
                 .requires(ServerCommandSource::isExecutedByPlayer)
                 .then(buildChangeCommand())
                 .then(literal("help")
                         .executes(context -> {
                             COMMANDS.runInfo(context, Categories.ALL);
-                            return Commands.SINGLE_SUCCESS;
+                            return SINGLE_SUCCESS;
                         })
                 )
                 .then(literal("confirm")
@@ -60,14 +51,14 @@ public class CommandRegister implements Command<ServerCommandSource> {
 
                             if (process == null){
                                 player.sendMessage(tr("commands.confirm.exception.null"));
-                                return Commands.SINGLE_SUCCESS;
+                                return SINGLE_SUCCESS;
                             }
 
                             VOTE = new VoteProcess(process.getPlayer(), process.getType(), basisTicks);
                             CommandRegister.toVote.put(player, VOTE);
                             toConfirm.clear();
 
-                            return Commands.SINGLE_SUCCESS;
+                            return SINGLE_SUCCESS;
                         }))
                 .then(literal("cancel")
                         .executes(cancel -> {
@@ -76,13 +67,13 @@ public class CommandRegister implements Command<ServerCommandSource> {
 
                             if (process == null) {
                                 player.sendMessage(tr("commands.confirm.exception.null"));
-                                return Commands.SINGLE_SUCCESS;
+                                return SINGLE_SUCCESS;
                             }
 
                             toConfirm.remove(player);
                             player.sendMessage(tr("commands.confirm.cancel"));
 
-                            return Commands.SINGLE_SUCCESS;
+                            return SINGLE_SUCCESS;
                         }))
                 .then(literal("yes")
                         .executes(context -> {
@@ -94,7 +85,7 @@ public class CommandRegister implements Command<ServerCommandSource> {
                             } else {
                                 player.sendMessage(tr("vote.null"));
                             }
-                            return Commands.SINGLE_SUCCESS;
+                            return SINGLE_SUCCESS;
                         }))
                 .then(literal("no")
                         .executes(context -> {
@@ -106,7 +97,7 @@ public class CommandRegister implements Command<ServerCommandSource> {
                             } else {
                                 player.sendMessage(tr("vote.null"));
                             }
-                            return Commands.SINGLE_SUCCESS;
+                            return SINGLE_SUCCESS;
                         }))
                 .then(literal("passCoolDown")
                         .requires(source -> source.hasPermissionLevel(4))
@@ -114,8 +105,8 @@ public class CommandRegister implements Command<ServerCommandSource> {
                             ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
                             toCoolDown.clear();
                             Text message = tr("cd.clear");
-                            player.getServer().getPlayerManager().broadcast(message,false);
-                            return Commands.SINGLE_SUCCESS;
+                            Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(message,false);
+                            return SINGLE_SUCCESS;
                         }))
         );
     }
@@ -127,7 +118,7 @@ public class CommandRegister implements Command<ServerCommandSource> {
             change.then(literal(subCommandName)
                     .executes(context -> {
                         handleConfirm(context, type);
-                        return Commands.SINGLE_SUCCESS;
+                        return SINGLE_SUCCESS;
                     }));
         }
         return change;
@@ -149,13 +140,13 @@ public class CommandRegister implements Command<ServerCommandSource> {
             player.sendMessage(tr("commands.lack"));
         }
     }
-    public static void serverTick(MinecraftServer server){
-        handleServerTick(server, toConfirm);
-        handleServerTick(server, toVote);
-        handleServerTick(server, toCoolDown);
+    public static void serverTick(){
+        handleServerTick(toConfirm);
+        handleServerTick(toVote);
+        handleServerTick(toCoolDown);
     }
 
-    protected static <T extends Process> void handleServerTick(MinecraftServer server, HashMap<ServerPlayerEntity, T> todo) {
+    protected static <T extends Process> void handleServerTick(HashMap<ServerPlayerEntity, T> todo) {
         HashSet<ServerPlayerEntity> toRemove = new HashSet<>();
 
         for (ServerPlayerEntity player : todo.keySet()) {
@@ -168,11 +159,11 @@ public class CommandRegister implements Command<ServerCommandSource> {
             } else {
                 toRemove.add(player);
                 if (_todo instanceof VoteProcess) {
-                    executeVoteResult(server, player, (VoteProcess) _todo);
+                    executeVoteResult(player, (VoteProcess) _todo);
                 } else if (_todo instanceof ConfirmProcess){
-                    notifyTimeoutConfirm(server, player);
+                    notifyTimeoutConfirm(player);
                 } else if (_todo instanceof CoolDownProcess) {
-                    notifyTimeoutCoolDown(server,player);
+                    notifyTimeoutCoolDown(player);
                 }
             }
         }
@@ -182,14 +173,14 @@ public class CommandRegister implements Command<ServerCommandSource> {
         }
     }
 
-    private static void notifyTimeoutConfirm(MinecraftServer server, ServerPlayerEntity player){
+    private static void notifyTimeoutConfirm(ServerPlayerEntity player){
         player.sendMessage(tr("commands.confirm.timeout"));
     }
 
-    private static void notifyTimeoutCoolDown(MinecraftServer server, ServerPlayerEntity player){
+    private static void notifyTimeoutCoolDown(ServerPlayerEntity player){
         player.sendMessage(tr("commands.cd.timeout"));
     }
-    private static void executeVoteResult(MinecraftServer server, ServerPlayerEntity player, VoteProcess voteProcess) {
+    private static void executeVoteResult(ServerPlayerEntity player, VoteProcess voteProcess) {
         boolean passed = VOTE.showVotingResultEventually();
         if (passed) {
             Types type = voteProcess.getType();
@@ -200,7 +191,7 @@ public class CommandRegister implements Command<ServerCommandSource> {
             Text message = getTextMessage(player, type);
             PlayerData sourceData = EconomyMod.data.getOrCreate(player);
             sourceData.addMoney(-price);
-            player.getServer().getPlayerManager().broadcast(message,false);
+            Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(message,false);
         }
     }
 

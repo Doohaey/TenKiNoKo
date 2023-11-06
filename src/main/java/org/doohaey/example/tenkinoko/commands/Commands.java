@@ -1,6 +1,5 @@
 package org.doohaey.example.tenkinoko.commands;
 
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.server.command.ServerCommandSource;
@@ -11,13 +10,9 @@ import org.doohaey.example.tenkinoko.util.enums.Types;
 
 import static org.doohaey.example.tenkinoko.util.ModTranslator.tr;
 
-public class Commands implements Command<ServerCommandSource> {
-    @Override
-    public int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        return 0;
-    }
-    public int runInfo(CommandContext<ServerCommandSource> context, Categories category){
-        ServerPlayerEntity player = context.getSource().getPlayer();
+public class Commands {
+    public void runInfo(CommandContext<ServerCommandSource> context, Categories category) throws CommandSyntaxException {
+        ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
 
         switch (category){
             case ALL:
@@ -29,28 +24,26 @@ public class Commands implements Command<ServerCommandSource> {
             case WEATHER:
                 player.sendMessage(tr("commands.info.category.weathers"));
         }
-        return Commands.SINGLE_SUCCESS;
     }
 
-    public int runChange(ServerPlayerEntity player, Types type){
+    public void runChange(ServerPlayerEntity player, Types type){
         ServerWorld serverWorld = player.getServerWorld();
         if (type == Types.RAINY || type == Types.THUNDERSTORM || type == Types.CLEAR) {
-            return runChangeWeather(type, serverWorld);
+            runChangeWeather(type, serverWorld);
         } else {
-            return runChangeTime(type, serverWorld);
+            runChangeTime(type, serverWorld);
         }
     }
 
-    private int runChangeWeather(Types type, ServerWorld serverWorld) {
+    private void runChangeWeather(Types type, ServerWorld serverWorld) {
         switch (type) {
             case RAINY -> serverWorld.setWeather(0,12000,true,false);
             case THUNDERSTORM -> serverWorld.setWeather(0,12000,true,true);
             case CLEAR -> serverWorld.setWeather(12000,0,false,false);
         }
-        return Commands.SINGLE_SUCCESS;
     }
 
-    private int runChangeTime(Types type, ServerWorld serverWorld){
+    private void runChangeTime(Types type, ServerWorld serverWorld){
         long time = serverWorld.getTime();
         switch (type) {
             case MORNING -> time = 1000;
@@ -60,6 +53,5 @@ public class Commands implements Command<ServerCommandSource> {
         }
         serverWorld.setTimeOfDay(time);
 
-        return Commands.SINGLE_SUCCESS;
     }
 }
