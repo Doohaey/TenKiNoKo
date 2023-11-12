@@ -75,7 +75,7 @@ public class VoteProcess extends Process {
 
     private Text getTextMessage(boolean isEventually){
          if (isEventually) return tr("vote.result.eventually", yesVote, noVote, stringResult());
-         else return tr("vote.result.process");
+         else return tr("vote.result.process", yesVote, noVote);
     }
 
     private Text stringResult(){
