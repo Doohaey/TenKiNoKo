@@ -3,7 +3,7 @@
   "commands.info.category.weathers": "Weathers:\nRainy, thunderstorm, sunny.",
   "commands.info.category.times": "Times:\nMorning, noon, evening, midnight.",
   "commands.info.exception" : "Wrong Augment.To acquire the correct weather or time augment, enter /tk help for more information.",
-  "commands.lack" : "{0} have not enough money to initialize a transformation.",
+  "commands.lack" : "You have not enough money to initialize a transformation of weather/time.",
   "commands.confirm": "Enter /tk confirm to initiate a vote.",
   "commands.confirm.occupied" : "Weather/time changed(in coolDown), or voting.",
   "commands.confirm.exception.augment" : "Wrong augment!",

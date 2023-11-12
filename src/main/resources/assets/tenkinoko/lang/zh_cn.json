@@ -3,7 +3,7 @@
   "commands.info.category.weathers": "天气:\n雨天、雷暴、晴天。",
   "commands.info.category.times": "时间:\n早晨、中午、傍晚、午夜。",
   "commands.info.exception" : "参数错误。要获取正确的天气或时间参数，请输入 /tk help 查看更多信息。",
-  "commands.lack" : "{0} 没有足够的钱来初始化转换。",
+  "commands.lack" : "没有足够的钱来发起天气转换。",
   "commands.confirm": "输入 /tk confirm 来启动一个投票。",
   "commands.confirm.occupied" : "天气/时间已改变(正在冷却时间)，或正在投票。",
   "commands.confirm.exception.augment" : "参数错误！",
