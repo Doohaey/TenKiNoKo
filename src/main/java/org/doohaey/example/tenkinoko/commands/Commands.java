@@ -44,12 +44,12 @@ public class Commands {
     }
 
     private void runChangeTime(Types type, ServerWorld serverWorld){
-        long time = serverWorld.getTime();
+        long time = (serverWorld.getTime() / 24000) * 24000;
         switch (type) {
-            case MORNING -> time = 1000;
-            case NOON -> time = 6000;
-            case EVENING -> time = 11000;
-            case MIDNIGHT -> time = 18000;
+            case MORNING -> time += 1000;
+            case NOON -> time += 6000;
+            case EVENING -> time += 11000;
+            case MIDNIGHT -> time += 18000;
         }
         serverWorld.setTimeOfDay(time);
 

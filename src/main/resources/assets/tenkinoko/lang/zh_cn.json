@@ -12,7 +12,7 @@
   "commands.cd.timeout": "冷却结束，可以重新修改天气了",
   "commands.confirm.cancel" : "成功取消确认。",
   "vote.start" : "{0} 发起了关于将 {1} 更改为 {2} 的投票。\n当前的投票状态是：\n 赞成 : 1 \n 反对 : 0。",
-  "vote.result.process" : "目前投票结果:\n 赞成:{0}\n 反对:{1}\n",
+  "vote.result.process" : "赞成:{0}\n 反对:{1}\n",
   "vote.result.eventually" : "投票结果:\n 赞成:{0}\n 反对:{1}\n 投票 {2} 通过。",
   "vote.passed" : "成功地",
   "vote.denied" : "未",
@@ -20,7 +20,7 @@
   "vote.null" : "没有进行中的投票！",
   "vote.yes" : "成功投票赞成",
   "vote.no" : "成功投票反对",
-  "vote.add" : "有人投了票，现在投票情况是：\n",
+  "vote.add" : "有人投了票，现在投票情况是:\n",
   "money.cost" : "{0}成功更改天气/时间为{1}，花费了 {2} 竹萌币（含税费）",
   "cd.clear" : "某权限狗重置了天气插件的冷却时间，现在可以发起天气更改."
 }
