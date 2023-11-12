@@ -32,7 +32,7 @@ public class CommandRegister {
     public static HashMap<ServerPlayerEntity, ConfirmProcess> toConfirm = new HashMap<>();
     public static HashMap<ServerPlayerEntity, VoteProcess> toVote = new HashMap<>();
     public static HashMap<ServerPlayerEntity, CoolDownProcess> toCoolDown = new HashMap<>();
-    public static long price = (long) (20 * (1 + ModConfig.TAX_RESTOCK.getValue()));
+    public static long price = (long) (10000 * (1 + ModConfig.TAX_RESTOCK.getValue()));
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(literal("tk")
