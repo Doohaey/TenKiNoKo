@@ -40,10 +40,10 @@ public class VoteProcess extends Process {
         if (isAvailableVoter(voter)) {
             if (ballot) {
                 yesVote++;
-                player.sendMessage(tr("vote.yes"));
+                voter.sendMessage(tr("vote.yes"));
             } else {
                 noVote++;
-                player.sendMessage(tr("vote.no"));
+                voter.sendMessage(tr("vote.no"));
             }
             votedPlayers.add(voter);
             return true;

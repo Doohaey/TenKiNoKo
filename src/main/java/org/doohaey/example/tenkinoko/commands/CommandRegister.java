@@ -54,10 +54,18 @@ public class CommandRegister {
                                 return SINGLE_SUCCESS;
                             }
 
-                            VOTE = new VoteProcess(process.getPlayer(), process.getType(), basisTicks);
+                            Types types = process.getType();
+                            Categories categories = Categories.ALL;
+                            if (types == Types.CLEAR || types == Types.RAINY || types == Types.THUNDERSTORM) {
+                                categories = Categories.WEATHER;
+                            } else {
+                                categories = Categories.TIME;
+                            }
+
+                            VOTE = new VoteProcess(process.getPlayer(), types, basisTicks);
                             CommandRegister.toVote.put(player, VOTE);
                             toConfirm.clear();
-                            Text message = tr("vote.start");
+                            Text message = tr("vote.start",player.getPlayerListName(), categories, types);
                             Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(message,false);
 
                             return SINGLE_SUCCESS;
