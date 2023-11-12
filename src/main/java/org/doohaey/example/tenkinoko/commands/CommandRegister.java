@@ -188,6 +188,7 @@ public class CommandRegister {
     }
     private static void executeVoteResult(ServerPlayerEntity player, VoteProcess voteProcess) {
         boolean passed = VOTE.checkResult();
+        VOTE.showVotingResultEventually();
         if (passed) {
             Types type = voteProcess.getType();
             COMMANDS.runChange(player, type);

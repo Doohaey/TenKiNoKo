@@ -67,10 +67,9 @@ public class VoteProcess extends Process {
         Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(message,false);
     }
 
-    public boolean showVotingResultEventually() {
+    public void showVotingResultEventually() {
         Text message = this.getTextMessage(true);
         Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(message, false);
-        return true;
     }
 
     private Text getTextMessage(boolean isEventually){
