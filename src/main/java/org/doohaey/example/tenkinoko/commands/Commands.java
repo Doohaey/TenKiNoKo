@@ -5,8 +5,11 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import org.doohaey.example.tenkinoko.util.enums.Categories;
 import org.doohaey.example.tenkinoko.util.enums.Types;
+
+import java.util.Iterator;
 
 import static org.doohaey.example.tenkinoko.util.ModTranslator.tr;
 
@@ -44,14 +47,15 @@ public class Commands {
     }
 
     private void runChangeTime(Types type, ServerWorld serverWorld){
-        long time = (serverWorld.getTime() / 24000) * 24000;
+        long timeOfDay = (serverWorld.getTimeOfDay() / 24000L) * 24000L;
         switch (type) {
-            case MORNING -> time += 1000;
-            case NOON -> time += 6000;
-            case EVENING -> time += 11000;
-            case MIDNIGHT -> time += 18000;
+            case MORNING -> timeOfDay += 1000L;
+            case NOON -> timeOfDay += 6000L;
+            case EVENING -> timeOfDay += 11000L;
+            case MIDNIGHT -> timeOfDay += 18000L;
         }
-        serverWorld.setTimeOfDay(time);
+        serverWorld.setTimeOfDay(timeOfDay);
 
     }
+
 }

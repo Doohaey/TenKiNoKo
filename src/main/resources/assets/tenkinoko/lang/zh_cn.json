@@ -11,7 +11,7 @@
   "commands.confirm.timeout": "确认超时。",
   "commands.cd.timeout": "冷却结束，可以重新修改天气了",
   "commands.confirm.cancel" : "成功取消确认。",
-  "vote.start" : "{0} 发起了关于将 {1} 更改为 {2} 的投票。\n当前的投票状态是：\n 赞成 : 1 \n 反对 : 0。",
+  "vote.start" : "{0} 发起了关于将 {1} 更改为 {2} 的投票。\n当前的投票状态是：\n 赞成 : 1 \n 反对 : 0。\n 想要赞成输入/tk yes，反对则输入/tk no.",
   "vote.result.process" : "赞成:{0}\n 反对:{1}\n",
   "vote.result.eventually" : "投票结果:\n 赞成:{0}\n 反对:{1}\n 投票 {2} 通过。",
   "vote.passed" : "成功地",
