@@ -82,7 +82,7 @@ public class VoteProcess extends Process {
         return  (checkResult()) ? tr("vote.passed") : tr("vote.denied");
     }
 
-    private boolean checkResult(){
+    public boolean checkResult(){
         return  (yesVote >= 2 * noVote && noVote <= 3);
     }
 

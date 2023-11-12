@@ -187,7 +187,7 @@ public class CommandRegister {
         player.sendMessage(tr("commands.cd.timeout"));
     }
     private static void executeVoteResult(ServerPlayerEntity player, VoteProcess voteProcess) {
-        boolean passed = VOTE.showVotingResultEventually();
+        boolean passed = VOTE.checkResult();
         if (passed) {
             Types type = voteProcess.getType();
             COMMANDS.runChange(player, type);
@@ -202,6 +202,6 @@ public class CommandRegister {
     }
 
     private static Text getTextMessage(ServerPlayerEntity player, Types types){
-        return tr("money.cost", player.getPlayerListName(), types, price);
+        return tr("money.cost", player.getPlayerListName(), types, (price / 100));
     }
 }
