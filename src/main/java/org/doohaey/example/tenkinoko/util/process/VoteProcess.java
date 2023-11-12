@@ -27,27 +27,31 @@ public class VoteProcess extends Process {
         votedPlayers.add(player);
     }
 
-    public void countYes(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        count(true, context);
+    public boolean countYes(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        return count(true, context);
     }
 
-    public void countNo(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        count(false, context);
+    public boolean countNo(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        return count(false, context);
     }
 
-    private void count(boolean ballot, CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    private boolean count(boolean ballot, CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity voter = context.getSource().getPlayerOrThrow();
         if (isAvailableVoter(voter)) {
             if (ballot) {
                 yesVote++;
+                player.sendMessage(tr("vote.yes"));
             } else {
                 noVote++;
+                player.sendMessage(tr("vote.no"));
             }
             votedPlayers.add(voter);
+            return true;
         } else {
             voter.sendMessage(tr("vote.voted"));
+            return false;
         }
-    }
+    }//返回是否已经投票过，如果是有效的投票再更新投票并显示更新的投票结果。
 
     private boolean isAvailableVoter(ServerPlayerEntity voter){
         for (ServerPlayerEntity votedPlayer : votedPlayers) {
@@ -59,21 +63,23 @@ public class VoteProcess extends Process {
     public void showVotingResultInProcess() {
         Text message = tr("vote.add");
         Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(message,false);
-        showVotingResultEventually();
+        message = getTextMessage(false);
+        Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(message,false);
     }
 
     public boolean showVotingResultEventually() {
-        Text message = this.getTextMessage();
+        Text message = this.getTextMessage(true);
         Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(message, false);
         return true;
     }
 
-    private Text getTextMessage(){
-        return tr("vote.result", yesVote, noVote, stringResult());
+    private Text getTextMessage(boolean isEventually){
+         if (isEventually) return tr("vote.result.eventually", yesVote, noVote, stringResult());
+         else return tr("vote.result.process");
     }
 
-    private String stringResult(){
-        return  (checkResult()) ? tr("vote.passed").toString() : tr("vote.denied").toString();
+    private Text stringResult(){
+        return  (checkResult()) ? tr("vote.passed") : tr("vote.denied");
     }
 
     private boolean checkResult(){

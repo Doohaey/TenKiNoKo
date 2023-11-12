@@ -26,4 +26,12 @@ public class ModConfig extends HokiConfig {
             "The tax rate players should pay when restocking.",
             Config::getDouble
     );
+
+    @ConfigOption
+    public static final Option<Boolean> CHANGEABLE = new Option<>(
+            "core.changeable",
+            true,
+            "The weather is allowed to change.",
+            Config::getBoolean
+    );
 }

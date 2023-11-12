@@ -57,6 +57,8 @@ public class CommandRegister {
                             VOTE = new VoteProcess(process.getPlayer(), process.getType(), basisTicks);
                             CommandRegister.toVote.put(player, VOTE);
                             toConfirm.clear();
+                            Text message = tr("vote.start");
+                            Objects.requireNonNull(player.getServer()).getPlayerManager().broadcast(message,false);
 
                             return SINGLE_SUCCESS;
                         }))
@@ -79,9 +81,7 @@ public class CommandRegister {
                         .executes(context -> {
                             ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
                             if (!toVote.isEmpty()) {
-                                VOTE.countYes(context);
-                                player.sendMessage(tr("vote.success"));
-                                VOTE.showVotingResultInProcess();
+                                if (VOTE.countYes(context)) VOTE.showVotingResultInProcess();
                             } else {
                                 player.sendMessage(tr("vote.null"));
                             }
@@ -91,9 +91,7 @@ public class CommandRegister {
                         .executes(context -> {
                             ServerPlayerEntity player = context.getSource().getPlayerOrThrow();
                             if (!toVote.isEmpty()) {
-                                VOTE.countNo(context);
-                                player.sendMessage(tr("vote.no"));
-                                VOTE.showVotingResultInProcess();
+                                if (VOTE.countNo(context)) VOTE.showVotingResultInProcess();
                             } else {
                                 player.sendMessage(tr("vote.null"));
                             }
@@ -196,6 +194,6 @@ public class CommandRegister {
     }
 
     private static Text getTextMessage(ServerPlayerEntity player, Types types){
-        return tr("money.cost", player, types, price);
+        return tr("money.cost", player.getPlayerListName(), types, price);
     }
 }
