@@ -5,11 +5,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import org.doohaey.example.tenkinoko.util.enums.Categories;
 import org.doohaey.example.tenkinoko.util.enums.Types;
-
-import java.util.Iterator;
 
 import static org.doohaey.example.tenkinoko.util.ModTranslator.tr;
 
